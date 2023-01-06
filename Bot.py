@@ -6,7 +6,7 @@ class Bot:
     pass
 
 
-def x():
+def test():
     city = 'Оренбург'
     coordinates = Coordinates()
     water = Water()

@@ -1,6 +1,6 @@
-from Bot import x
+from Bot import test
 
 if __name__ == '__main__':
     print('START')
-    water = x()
+    water = test()
     print(water)

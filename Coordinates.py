@@ -24,5 +24,4 @@ class Coordinates:
         coordinates_point = coordinates_geoobject['Point']
         coordinates_pos = coordinates_point['pos']
         coordinates = [float(point) for point in coordinates_pos.split()]
-        print(coordinates)
         return {'lat': coordinates[1], 'lon': coordinates[0]}
