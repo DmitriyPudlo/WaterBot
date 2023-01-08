@@ -1,10 +1,10 @@
 import requests
-from Config import token_geo
+from Config import TOKEN_GEO
 
 
 class Coordinates:
     def __init__(self):
-        self.token_geo = token_geo
+        self.token_geo = TOKEN_GEO
         self.url = 'https://geocode-maps.yandex.ru/1.x'
         self.format = 'json'
         self.lang = 'ru_RU'
@@ -19,6 +19,8 @@ class Coordinates:
         coordinates_json = coordinates_response.json()
         coordinates_data = coordinates_json['response']
         coordinates_geoobjectcollection = coordinates_data['GeoObjectCollection']
+        if len(coordinates_geoobjectcollection['featureMember']) == 0:
+            return False
         coordinates_featurmember = coordinates_geoobjectcollection['featureMember'][0]
         coordinates_geoobject = coordinates_featurmember['GeoObject']
         coordinates_point = coordinates_geoobject['Point']

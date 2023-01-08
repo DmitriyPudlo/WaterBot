@@ -1,6 +1,5 @@
-from Bot import test
+from Bot import telebot
 
 if __name__ == '__main__':
     print('START')
-    water = test()
-    print(water)
+    telebot.infinity_polling()
