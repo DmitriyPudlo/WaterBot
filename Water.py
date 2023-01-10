@@ -9,8 +9,8 @@ class Water:
         self.token_water = TOKEN_WATER
 
     def check_weather(self, coordinates):
-        params = {'lat': coordinates['lat'],
-                  'lon': coordinates['lon'],
+        params = {'lat': coordinates[0],
+                  'lon': coordinates[1],
                   'lang': self.lang}
         headers = {'X-Yandex-API-Key': self.token_water}
         water_response = requests.get(self.url, params=params, headers=headers)
