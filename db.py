@@ -26,7 +26,8 @@ class Water_db:
         sql_create_table = 'CREATE TABLE IF NOT EXISTS client (' \
                            'id integer NOT NULL GENERATED ALWAYS AS IDENTITY,' \
                            'client_id INT unique,' \
-                           'city VARCHAR(30),' \
+                           'lat VARCHAR(15),' \
+                           'lon VARCHAR(15),' \
                            'time VARCHAR(5))'
         self.cursor_db.execute(sql_create_table)
 
@@ -37,25 +38,25 @@ class Water_db:
         self.cursor_db.execute(sql_add_user)
 
     def new_city(self, client_id, geo_tag):
-        sql_add_user = f"UPDATE client SET city = '{geo_tag}' WHERE client_id = '{client_id}'"
-        self.cursor_db.execute(sql_add_user)
+        lat = geo_tag['lat']
+        lon = geo_tag['lon']
+        sql_add_lat = f"UPDATE client SET lat = '{lat}' WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_add_lat)
+        sql_add_lon = f"UPDATE client SET lon = '{lon}' WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_add_lon)
 
     def new_time(self, client_id, time):
         sql_add_user = f"UPDATE client SET time = '{time}' WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_add_user)
 
     def get_city(self, client_id):
-        sql_check = f"SELECT city FROM client WHERE client_id = '{client_id}'"
+        sql_check = f"SELECT lat, lon FROM client WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_check)
-        geo_tag_db = self.cursor_db.fetchall()
+        geo_tag_db = self.cursor_db.fetchone()
         print(geo_tag_db)
-        geo_tag = geo_tag_db[0]
-        print(geo_tag)
-        if not geo_tag:
+        if not geo_tag_db[0]:
             return False
-        else:
-            geo_tag = [float(coordinate) for coordinate in geo_tag]
-            return geo_tag
+        return {'lat': geo_tag_db[0], 'lon': geo_tag_db[1]}
 
     def get_time(self, client_id):
         sql_check = f"SELECT time FROM client WHERE client_id = '{client_id}'"
