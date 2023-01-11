@@ -27,4 +27,3 @@ class Coordinates:
         coordinates_pos = coordinates_point['pos']
         coordinates = [float(point) for point in coordinates_pos.split()]
         return {'lat': coordinates[1], 'lon': coordinates[0]}
-        # return coordinates[1], coordinates[0]
