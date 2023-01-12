@@ -60,7 +60,7 @@ class Water_db:
         self.cursor_db.execute(sql_get_city)
         geo_tag_db = self.cursor_db.fetchone()
         print(geo_tag_db)
-        if not geo_tag_db[0]:
+        if not geo_tag_db or not geo_tag_db[0]:
             return False
         return {'lat': geo_tag_db[0], 'lon': geo_tag_db[1]}
 

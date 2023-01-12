@@ -72,13 +72,15 @@ def get_time(message):
             water_db.new_time(message.chat.id, need_time)
             telebot.send_message(message.chat.id, f"{msg_complete}")
             print('GO')
-            while True:
+            while water_db.get_city(message.chat.id):
                 now = current_time(message.chat.id)
                 if now == need_time:
                     print('YES')
                     msg = water.check_weather(geo_tag)
                     telebot.send_message(message.chat.id, f"{msg}")
                 time.sleep(60)
+            else:
+                print('Bye!')
     else:
         telebot.send_message(message.chat.id, f"{city_not_found}")
         return
@@ -98,5 +100,7 @@ def work(message):
             water_db.new_city(message.chat.id, geo_tag)
             telebot.send_message(message.chat.id, f"{msg_time}")
             return
+    elif water_db.get_time(message.chat.id):
+        return
     else:
         telebot.send_message(message.chat.id, f"{msg_time}")
