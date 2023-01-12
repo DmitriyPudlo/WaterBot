@@ -28,7 +28,9 @@ class Water_db:
                            'client_id INT unique,' \
                            'lat VARCHAR(15),' \
                            'lon VARCHAR(15),' \
-                           'time VARCHAR(5))'
+                           'time VARCHAR(5),' \
+                           'lag VARCHAR(10))'
+
         self.cursor_db.execute(sql_create_table)
 
     def add_user(self, client_id):
@@ -36,6 +38,10 @@ class Water_db:
                        f"VALUES ('{client_id}')" \
                        f"ON CONFLICT (client_id) DO NOTHING"
         self.cursor_db.execute(sql_add_user)
+
+    def add_lag(self, client_id, lag):
+        sql_add_lag = f"UPDATE client SET lag = '{lag}' WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_add_lag)
 
     def new_city(self, client_id, geo_tag):
         lat = geo_tag['lat']
@@ -46,12 +52,12 @@ class Water_db:
         self.cursor_db.execute(sql_add_lon)
 
     def new_time(self, client_id, time):
-        sql_add_user = f"UPDATE client SET time = '{time}' WHERE client_id = '{client_id}'"
-        self.cursor_db.execute(sql_add_user)
+        sql_new_time = f"UPDATE client SET time = '{time}' WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_new_time)
 
     def get_city(self, client_id):
-        sql_check = f"SELECT lat, lon FROM client WHERE client_id = '{client_id}'"
-        self.cursor_db.execute(sql_check)
+        sql_get_city = f"SELECT lat, lon FROM client WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_get_city)
         geo_tag_db = self.cursor_db.fetchone()
         print(geo_tag_db)
         if not geo_tag_db[0]:
@@ -59,10 +65,16 @@ class Water_db:
         return {'lat': geo_tag_db[0], 'lon': geo_tag_db[1]}
 
     def get_time(self, client_id):
-        sql_check = f"SELECT time FROM client WHERE client_id = '{client_id}'"
-        self.cursor_db.execute(sql_check)
+        sql_get_time = f"SELECT time FROM client WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_get_time)
         time = self.cursor_db.fetchone()
         return time[0]
+
+    def get_lag(self, client_id):
+        sql_get_lag = f"SELECT lag FROM client WHERE client_id = '{client_id}'"
+        self.cursor_db.execute(sql_get_lag)
+        time = self.cursor_db.fetchone()
+        return int(time[0])
 
     def del_client(self, client_id):
         sql_del_client = f"DELETE FROM client WHERE client_id = '{client_id}'"

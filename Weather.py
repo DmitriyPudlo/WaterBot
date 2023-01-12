@@ -1,19 +1,16 @@
 import requests
-from Config import TOKEN_WATER, msg_text, dict_wind_dir, dict_condition, times_of_day
+from Config import TOKEN_WATER
+from Messages import msg_text, dict_wind_dir, dict_condition, times_of_day
 
 
 class Weather:
     def __init__(self):
         self.url = 'https://api.weather.yandex.ru/v2/informers/'
-        self.lang = 'ru_RU'
         self.token_water = TOKEN_WATER
 
     def check_weather(self, coordinates):
-        params = {'lat': coordinates['lat'],
-                  'lon': coordinates['lon'],
-                  'lang': self.lang}
         headers = {'X-Yandex-API-Key': self.token_water}
-        weather_response = requests.get(self.url, params=params, headers=headers)
+        weather_response = requests.get(self.url, params=coordinates, headers=headers)
         weather_json = weather_response.json()
         to_bot = self.__prepare_info(weather_json)
         return to_bot
