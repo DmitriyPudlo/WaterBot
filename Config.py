@@ -1,9 +1,11 @@
-TOKEN_WATER = '747b8d86-2591-4aa2-bd3e-b8d2cbe3660d'
-TOKEN_GEO = '4153bafb-b6be-4097-814d-653ade3ffac5'
-TELEGRAM_TOKEN = '5359097635:AAGsjmkiJbmLfEtfFclA-prlkn2fH2Px2G8'
-DATABASE = 'postgres'
-USER = 'postgres'
-PASSWORD = '3616'
+import pass_token
+
+TOKEN_WATER = f'{pass_token.TELEGRAM_TOKEN}'
+TOKEN_GEO = f'{pass_token.TOKEN_GEO}'
+TELEGRAM_TOKEN = f'{pass_token.TELEGRAM_TOKEN}'
+DATABASE = f'{pass_token.DATABASE}'
+USER = f'{pass_token.USER}'
+PASSWORD = f'{pass_token.PASSWORD}'
 
 msg_text = '''Сейчас на улице {}°C, но ощущается как {}°C. Ветер {}, {}м/с, порывами до {}м/с. {}. 
 {} ожидается T воздуха {}°C. Ветер {}, {}м/с, порывами до {}м/с. {}. 

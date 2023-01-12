@@ -1,4 +1,4 @@
-from Water import Water
+from Weather import Weather
 from Coordinates import Coordinates
 from db import Water_db
 import telebot
@@ -16,7 +16,7 @@ def time_check(time):
 
 
 coordinates = Coordinates()
-water = Water()
+water = Weather()
 water_db = Water_db()
 telebot = telebot.TeleBot(TELEGRAM_TOKEN, parse_mode=None)
 
