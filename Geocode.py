@@ -1,5 +1,6 @@
 import requests
 from Config import TOKEN_GEO
+from city_list import city_list
 
 
 class Geocode:
@@ -9,7 +10,9 @@ class Geocode:
         self.format = 'json'
         self.lang = 'ru_RU'
 
-    def check_coordinates(self, city):
+    def get_coordinates(self, city):
+        if city not in city_list:
+            return False
         params = {'geocode': city,
                   'apikey': self.token_geo,
                   'format': self.format,
@@ -19,8 +22,8 @@ class Geocode:
         json = response.json()
         data = json['response']
         geoobjectcollection = data['GeoObjectCollection']
-        if len(geoobjectcollection['featureMember']) == 0:
-            return False
+        # if len(geoobjectcollection['featureMember']) == 0:
+        #     return False
         featurmember = geoobjectcollection['featureMember'][0]
         geoobject = featurmember['GeoObject']
         point = geoobject['Point']

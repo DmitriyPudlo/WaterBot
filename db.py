@@ -68,6 +68,8 @@ class Water_db:
         sql_get_time = f"SELECT time FROM client WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_get_time)
         time = self.cursor_db.fetchone()
+        if not time:
+            return False
         return time[0]
 
     def get_lag(self, client_id):
@@ -79,3 +81,13 @@ class Water_db:
     def del_client(self, client_id):
         sql_del_client = f"DELETE FROM client WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_del_client)
+
+    # def del_city(self, client_id):
+    #     sql_del_lat = f"UPDATE client SET lat = NULL WHERE client_id = '{client_id}'"
+    #     sql_del_lon = f"UPDATE client SET lon = NULL WHERE client_id = '{client_id}'"
+    #     self.cursor_db.execute(sql_del_lat)
+    #     self.cursor_db.execute(sql_del_lon)
+    #
+    # def del_time(self, client_id):
+    #     sql_del_time = f"UPDATE client SET time = NULL WHERE client_id = '{client_id}'"
+    #     self.cursor_db.execute(sql_del_time)
