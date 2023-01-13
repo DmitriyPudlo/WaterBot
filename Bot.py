@@ -12,6 +12,7 @@ from city_list import city_list
 PATTERN_TIME = '^\d{1,2}:\d{2}$'
 PATTERN_UPDATE_TIME = '^Изменить время: \d{1,2}:\d{2}$'
 PATTER_FIND_TIME = '\d{1,2}:\d{2}'
+PATTERN_UPDATE_CITY = '^Изменить город: \S+'
 ERROR_CORRECTION = 3600
 
 
@@ -27,6 +28,13 @@ def find_updated_time(time_):
     time_str = re.search(PATTER_FIND_TIME, time_)
     time_ = time_str.group()
     return time_
+
+
+def find_updated_city(coordinates):
+    coordinates = coordinates.replace('Изменить город: ', '')
+    if coordinates in city_list:
+        return coordinates
+    return False
 
 
 def get_posix_time():
@@ -98,7 +106,7 @@ def get_time(message):
 
 
 @telebot.message_handler(func=lambda message: message.text in city_list)
-def city(message):
+def get_city(message):
     geo_tag = water_db.get_city(message.chat.id)
     need_time = water_db.get_time(message.chat.id)
     if not geo_tag:
@@ -117,5 +125,19 @@ def update_time(message):
     need_time = water_db.get_time(message.chat.id)
     if need_time:
         need_time = find_updated_time(message.text)
+        if not time_check(need_time):
+            telebot.send_message(message.chat.id, f"{Messages.time_error}")
         water_db.new_time(message.chat.id, need_time)
         telebot.send_message(message.chat.id, f"{Messages.msg_change_time}")
+
+
+@telebot.message_handler(regexp=PATTERN_UPDATE_CITY)
+def update_city(message):
+    geo_tag = water_db.get_city(message.chat.id)
+    if geo_tag:
+        new_city = find_updated_city(message.text)
+        if not new_city:
+            telebot.send_message(message.chat.id, f"{Messages.city_not_found}")
+        geo_tag = geocode.get_coordinates(new_city)
+        water_db.new_city(message.chat.id, geo_tag)
+        telebot.send_message(message.chat.id, f"{Messages.msg_change_city}")
