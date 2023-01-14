@@ -3,6 +3,7 @@ from Weather import Weather
 from Geocode import Geocode
 from db import Water_db
 import telebot
+from telebot import types
 from datetime import datetime
 from Config import TELEGRAM_TOKEN
 import Messages
@@ -14,6 +15,14 @@ PATTERN_UPDATE_TIME = '^Изменить время: \d{1,2}:\d{2}$'
 PATTER_FIND_TIME = '\d{1,2}:\d{2}'
 PATTERN_UPDATE_CITY = '^Изменить город: \S+'
 ERROR_CORRECTION = 3600
+BUTTONS = ['Help']
+
+
+def create_markup():
+    markup_ = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for key in BUTTONS:
+        markup_.add(key)
+    return markup_
 
 
 def time_check(time_):
@@ -62,13 +71,14 @@ geocode = Geocode()
 water = Weather()
 water_db = Water_db()
 telebot = telebot.TeleBot(TELEGRAM_TOKEN, parse_mode=None)
+markup = create_markup()
 
 
 @telebot.message_handler(commands=['start'])
 def start(message):
-    telebot.send_message(message.chat.id, f"{Messages.msg_hello}")
+    telebot.send_message(message.chat.id, f"{Messages.msg_hello}", reply_markup=markup)
     water_db.del_client(message.chat.id)  # del after released
-    telebot.send_message(message.chat.id, f"{Messages.msg_city}")
+    telebot.send_message(message.chat.id, f"{Messages.msg_city}", reply_markup=markup)
     return
 
 
@@ -83,16 +93,16 @@ def get_time(message):
     geo_tag = water_db.get_city(message.chat.id)
     need_time = water_db.get_time(message.chat.id)
     if not geo_tag:
-        telebot.send_message(message.chat.id, f"{Messages.msg_city_first}")
+        telebot.send_message(message.chat.id, f"{Messages.msg_city_first}", reply_markup=markup)
         return
     elif not need_time:
         need_time = message.text
         if not time_check(need_time):
-            telebot.send_message(message.chat.id, f"{Messages.time_error}")
+            telebot.send_message(message.chat.id, f"{Messages.time_error}", reply_markup=markup)
             return
         find_lag(message.chat.id, message.date)
         water_db.new_time(message.chat.id, need_time)
-        telebot.send_message(message.chat.id, f"{Messages.msg_complete}")
+        telebot.send_message(message.chat.id, f"{Messages.msg_complete}", reply_markup=markup)
         while water_db.get_city(message.chat.id) and water_db.get_time(message.chat.id):
             print('GO')
             geo_tag = water_db.get_city(message.chat.id)
@@ -101,7 +111,7 @@ def get_time(message):
             if now_time == need_time:
                 print('YES')
                 msg = water.check_weather(geo_tag)
-                telebot.send_message(message.chat.id, f"{msg}")
+                telebot.send_message(message.chat.id, f"{msg}", reply_markup=markup)
             time.sleep(60)
 
 
@@ -113,10 +123,10 @@ def get_city(message):
         water_db.add_user(message.chat.id)
         geo_tag = geocode.get_coordinates(message.text)
         water_db.new_city(message.chat.id, geo_tag)
-        telebot.send_message(message.chat.id, f"{Messages.msg_time}")
+        telebot.send_message(message.chat.id, f"{Messages.msg_time}", reply_markup=markup)
         return
     elif not need_time:
-        telebot.send_message(message.chat.id, f'{Messages.time_error}')
+        telebot.send_message(message.chat.id, f'{Messages.time_error}', reply_markup=markup)
         return
 
 
@@ -126,9 +136,9 @@ def update_time(message):
     if need_time:
         need_time = find_updated_time(message.text)
         if not time_check(need_time):
-            telebot.send_message(message.chat.id, f"{Messages.time_error}")
+            telebot.send_message(message.chat.id, f"{Messages.time_error}", reply_markup=markup)
         water_db.new_time(message.chat.id, need_time)
-        telebot.send_message(message.chat.id, f"{Messages.msg_change_time}")
+        telebot.send_message(message.chat.id, f"{Messages.msg_change_time}", reply_markup=markup)
 
 
 @telebot.message_handler(regexp=PATTERN_UPDATE_CITY)
@@ -137,7 +147,30 @@ def update_city(message):
     if geo_tag:
         new_city = find_updated_city(message.text)
         if not new_city:
-            telebot.send_message(message.chat.id, f"{Messages.city_not_found}")
+            telebot.send_message(message.chat.id, f"{Messages.city_not_found}", reply_markup=markup)
         geo_tag = geocode.get_coordinates(new_city)
         water_db.new_city(message.chat.id, geo_tag)
-        telebot.send_message(message.chat.id, f"{Messages.msg_change_city}")
+        telebot.send_message(message.chat.id, f"{Messages.msg_change_city}", reply_markup=markup)
+
+
+@telebot.message_handler(func=lambda message: message.text == 'Help')
+def get_help(message):
+    telebot.send_message(message.chat.id, f'{Messages.msg_help}', reply_markup=markup)
+    geo_tag = water_db.get_city(message.chat.id)
+    if not geo_tag:
+        telebot.send_message(message.chat.id, f'{Messages.msg_city}', reply_markup=markup)
+        return
+    need_time = water_db.get_time(message.chat.id)
+    if not need_time:
+        telebot.send_message(message.chat.id, f'{Messages.msg_time}', reply_markup=markup)
+
+
+@telebot.message_handler(content_types='text')
+def catch_trash(message):
+    geo_tag = water_db.get_city(message.chat.id)
+    if not geo_tag:
+        telebot.send_message(message.chat.id, f'{Messages.city_not_found}', reply_markup=markup)
+        return
+    need_time = water_db.get_time(message.chat.id)
+    if not need_time:
+        telebot.send_message(message.chat.id, f'{Messages.time_error}', reply_markup=markup)
