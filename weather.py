@@ -1,6 +1,6 @@
 import requests
-from Config import TOKEN_WATER
-from Messages import msg_text, dict_wind_dir, dict_condition, times_of_day
+from config import TOKEN_WATER
+from messages import msg_text, dict_wind_dir, dict_condition, times_of_day
 
 
 class Weather:
@@ -12,11 +12,13 @@ class Weather:
         headers = {'X-Yandex-API-Key': self.token_water}
         weather_response = requests.get(self.url, params=coordinates, headers=headers)
         weather_json = weather_response.json()
+        print(weather_json)
         to_bot = self.__prepare_info(weather_json)
         return to_bot
 
     def __prepare_info(self, weather_json):
         fact_weather = weather_json['fact']
+        print(fact_weather)
         fact_temp = fact_weather['temp']
         feels_like = fact_weather['feels_like']
         wind_speed = fact_weather['wind_speed']
@@ -39,7 +41,7 @@ class Weather:
         forecast_wind_dir_two = part_two['wind_dir']
         forecast_wind_gust_two = part_two['wind_gust']
         forecast_condition_two = part_two['condition']
-        to_bot = msg_text.format(fact_temp, feels_like, dict_wind_dir[wind_dir], wind_speed,  wind_gust, dict_condition[condition],
+        to_bot = msg_text.format(fact_temp, feels_like, dict_wind_dir[wind_dir], wind_speed, wind_gust, dict_condition[condition],
                                  times_of_day[part_name_one], forecast_temp_avg_one, dict_wind_dir[forecast_wind_dir_one], forecast_wind_speed_one, forecast_wind_gust_one, dict_condition[forecast_condition_one],
                                  times_of_day[part_name_two], forecast_temp_avg_two, dict_wind_dir[forecast_wind_dir_two], forecast_wind_speed_two, forecast_wind_gust_two, dict_condition[forecast_condition_two])
         return to_bot

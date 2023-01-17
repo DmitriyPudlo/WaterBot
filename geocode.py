@@ -1,5 +1,5 @@
 import requests
-from Config import TOKEN_GEO
+from config import TOKEN_GEO
 from city_list import city_list
 
 
@@ -22,8 +22,6 @@ class Geocode:
         json = response.json()
         data = json['response']
         geoobjectcollection = data['GeoObjectCollection']
-        # if len(geoobjectcollection['featureMember']) == 0:
-        #     return False
         featurmember = geoobjectcollection['featureMember'][0]
         geoobject = featurmember['GeoObject']
         point = geoobject['Point']

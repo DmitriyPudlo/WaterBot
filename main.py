@@ -1,8 +1,8 @@
-from Bot import telebot
-from db import Water_db
+from bot import telebot
+from db import Weather_db
 
 if __name__ == '__main__':
     print('START')
-    db = Water_db()
+    db = Weather_db()
     db.create_database()
     telebot.infinity_polling()
