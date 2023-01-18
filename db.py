@@ -1,4 +1,5 @@
 import psycopg2
+import db_select
 from config import DATABASE, USER, PASSWORD
 
 
@@ -23,20 +24,7 @@ class Weather_db:
         self.__create_tables()
 
     def __create_tables(self):
-        sql_create_table = 'CREATE TABLE IF NOT EXISTS cities (' \
-                           'city_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,' \
-                           'city VARCHAR(100) unique,' \
-                           'reiteration int,' \
-                           'CONSTRAINT users_pkey PRIMARY KEY (city_id));' \
-                           'CREATE TABLE IF NOT EXISTS client (' \
-                           'id integer NOT NULL GENERATED ALWAYS AS IDENTITY,' \
-                           'client_id INT unique,' \
-                           'lat VARCHAR(15),' \
-                           'lon VARCHAR(15),' \
-                           'time VARCHAR(5),' \
-                           'lag VARCHAR(10),' \
-                           'city_id int,' \
-                           'FOREIGN KEY (city_id) REFERENCES cities (city_id))'
+        sql_create_table = db_select.mysql_db_create
 
         self.cursor_db.execute(sql_create_table)
 
@@ -47,7 +35,7 @@ class Weather_db:
         self.cursor_db.execute(sql_add_user)
 
     def add_lag(self, client_id, lag):
-        sql_add_lag = f"UPDATE client SET lag = '{lag}' WHERE client_id = '{client_id}'"
+        sql_add_lag = f"UPDATE client SET lag_time = '{lag}' WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_add_lag)
 
     def add_city(self, city):
