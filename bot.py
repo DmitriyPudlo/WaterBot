@@ -34,20 +34,6 @@ def find_updated_city(coordinates):
     return False
 
 
-def send_temperature(client_id):
-    while water_db.get_city(client_id) and water_db.get_time(client_id):
-        print('GO')
-        geo_tag = water_db.get_city(client_id)
-        need_time = water_db.get_time(client_id)
-        now_time = current_time(client_id)
-        print(now_time, need_time)
-        if now_time == need_time:
-            print('YES')
-            msg = weather.check_weather(geo_tag)
-            telebot.send_message(client_id, f"{msg}", reply_markup=markup)
-        time.sleep(60)
-
-
 geocode = Geocode()
 weather = Weather()
 water_db = Weather_db()
@@ -77,7 +63,18 @@ def get_time(message):
     add_lag(message.chat.id, message.date)
     water_db.new_time(message.chat.id, need_time)
     telebot.send_message(message.chat.id, f"{messages.msg_complete}", reply_markup=markup)
-    send_temperature(client_id=message.chat.id)
+    client_id = message.chat.id
+    while water_db.get_city(client_id) and water_db.get_time(client_id):
+        print('GO')
+        geo_tag = water_db.get_city(client_id)
+        need_time = water_db.get_time(client_id)
+        now_time = current_time()
+        print(now_time, need_time)
+        if now_time == need_time:
+            print('YES')
+            msg = weather.check_weather(geo_tag)
+            telebot.send_message(client_id, f"{msg}", reply_markup=markup)
+        time.sleep(60)
 
 
 @telebot.message_handler(func=lambda message: message.text in city_list)
