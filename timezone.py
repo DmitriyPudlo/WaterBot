@@ -1,11 +1,17 @@
 from datetime import datetime
 from db_mysql import Weather_db
 import time
-# from config import TIMEZONE_TOKEN
+from config import TIMEZONE_TOKEN
 
 ERROR_CORRECTION = 3600
 
 weather_db = Weather_db()
+
+
+def nice_time(time_):
+    if time_ < 10:
+        return f'0{time_}'
+    return time_
 
 
 def get_posix_time():
@@ -23,16 +29,16 @@ def add_lag(client_id, posix_time):
     weather_db.add_lag(client_id, lag)
 
 
-def current_time(cline_id):
-    lag = weather_db.get_lag(cline_id) * ERROR_CORRECTION
-    now_posix = int(time.time()) - lag
+def current_time():
+    now_posix = int(time.time())
     now = time.gmtime(now_posix)
-    now_str = f'{now.tm_hour}:{now.tm_min}'
+    hour = nice_time(now.tm_hour)
+    minute = nice_time(now.tm_min)
+    now_str = f'{hour + 5}:{minute}'
     return now_str
 
 
-# class Timezone:
-#     def __init__(self):
-#         self.url = 'https://timezoneapi.io/api/timezone/'
-#         self.token = TIMEZONE_TOKEN
-
+class Timezone:
+    def __init__(self):
+        self.url = 'https://timezoneapi.io/api/timezone/'
+        self.token = TIMEZONE_TOKEN
