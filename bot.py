@@ -83,8 +83,10 @@ def get_city(message):
     need_time = water_db.get_time(message.chat.id)
     if not geo_tag:
         water_db.add_user(message.chat.id)
+        print(f'New user {message.chat.id}')
         geo_tag = geocode.get_coordinates(message.text)
         water_db.new_city(message.chat.id, geo_tag)
+        print(f'New city {message.text}')
         telebot.send_message(message.chat.id, f"{messages.msg_time}", reply_markup=markup)
         return
     elif not need_time:
