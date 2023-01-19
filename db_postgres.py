@@ -24,8 +24,7 @@ class Weather_db:
         self.__create_tables()
 
     def __create_tables(self):
-        sql_create_table = db_select.mysql_db_create
-
+        sql_create_table = db_select.postgres_db_create
         self.cursor_db.execute(sql_create_table)
 
     def add_user(self, client_id):
@@ -64,7 +63,6 @@ class Weather_db:
         sql_get_city = f"SELECT lat, lon FROM client WHERE client_id = '{client_id}'"
         self.cursor_db.execute(sql_get_city)
         geo_tag_db = self.cursor_db.fetchone()
-        print(geo_tag_db)
         if not geo_tag_db or not geo_tag_db[0]:
             return False
         return {'lat': geo_tag_db[0], 'lon': geo_tag_db[1]}
