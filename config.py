@@ -1,4 +1,4 @@
-import pass_token
+# import pass_token
 
 TOKEN_WATER = input('Weather token')
 TOKEN_GEO = input('Geocode token')
