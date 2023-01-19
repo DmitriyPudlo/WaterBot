@@ -1,7 +1,7 @@
 from datetime import datetime
 from db_mysql import Weather_db
 import time
-from config import TIMEZONE_TOKEN
+# from config import TIMEZONE_TOKEN
 
 ERROR_CORRECTION = 3600
 
@@ -31,8 +31,8 @@ def current_time(cline_id):
     return now_str
 
 
-class Timezone:
-    def __init__(self):
-        self.url = 'https://timezoneapi.io/api/timezone/'
-        self.token = TIMEZONE_TOKEN
+# class Timezone:
+#     def __init__(self):
+#         self.url = 'https://timezoneapi.io/api/timezone/'
+#         self.token = TIMEZONE_TOKEN
 

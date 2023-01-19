@@ -1,12 +1,12 @@
 # import pass_token
 
-TOKEN_WATER = input('Weather token')
-TOKEN_GEO = input('Geocode token')
-TELEGRAM_TOKEN = input('Telegram token')
-HOST = input('Host name')
-USER_MYSQL = input('User name')
-PASSWORD_MYSQL = input('Password')
-DATABASE_MYSQL = input('Database name')
+TOKEN_WATER = input('Weather token: ')
+TOKEN_GEO = input('Geocode token: ')
+TELEGRAM_TOKEN = input('Telegram token: ')
+HOST = input('Host name: ')
+USER_MYSQL = input('User name: ')
+PASSWORD_MYSQL = input('Password: ')
+DATABASE_MYSQL = input('Database name: ')
 
 # TOKEN_WATER = f'{pass_token.TOKEN_WATER}'
 # TOKEN_GEO = f'{pass_token.TOKEN_GEO}'
