@@ -12,13 +12,11 @@ class Weather:
         headers = {'X-Yandex-API-Key': self.token_water}
         weather_response = requests.get(self.url, params=coordinates, headers=headers)
         weather_json = weather_response.json()
-        print(weather_json)
         to_bot = self.__prepare_info(weather_json)
         return to_bot
 
     def __prepare_info(self, weather_json):
         fact_weather = weather_json['fact']
-        print(fact_weather)
         fact_temp = fact_weather['temp']
         feels_like = fact_weather['feels_like']
         wind_speed = fact_weather['wind_speed']
