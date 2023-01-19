@@ -1,6 +1,6 @@
 from weather import Weather
 from geocode import Geocode
-from db import Weather_db
+from db_mysql import Weather_db
 import telebot
 from telebot import types
 from config import TELEGRAM_TOKEN
