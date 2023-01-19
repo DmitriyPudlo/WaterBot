@@ -7,6 +7,7 @@ HOST = input('Host name: ')
 USER_MYSQL = input('User name: ')
 PASSWORD_MYSQL = input('Password: ')
 DATABASE_MYSQL = input('Database name: ')
+TIMEZONE_TOKEN = input('Timezone token: ')
 
 # TOKEN_WATER = f'{pass_token.TOKEN_WATER}'
 # TOKEN_GEO = f'{pass_token.TOKEN_GEO}'
