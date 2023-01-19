@@ -1,5 +1,5 @@
 from datetime import datetime
-from db import Weather_db
+from db_mysql import Weather_db
 import time
 from config import TIMEZONE_TOKEN
 
@@ -29,6 +29,7 @@ def current_time(cline_id):
     now = time.gmtime(now_posix)
     now_str = f'{now.tm_hour}:{now.tm_min}'
     return now_str
+
 
 class Timezone:
     def __init__(self):
