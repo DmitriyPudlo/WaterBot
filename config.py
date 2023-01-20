@@ -8,13 +8,15 @@ USER_MYSQL = input('User name: ')
 PASSWORD_MYSQL = input('Password: ')
 DATABASE_MYSQL = input('Database name: ')
 TIMEZONE_TOKEN = input('Timezone token: ')
+DATABASE = 'postgres'
+USER = 'postgres'
 
 # TOKEN_WATER = f'{pass_token.TOKEN_WATER}'
 # TOKEN_GEO = f'{pass_token.TOKEN_GEO}'
 # TELEGRAM_TOKEN = f'{pass_token.TELEGRAM_TOKEN}'
 # TIMEZONE_TOKEN = f'{pass_token.TIMEZONE_TOKEN}'
-# DATABASE = f'{pass_token.DATABASE}'
-# USER = f'{pass_token.USER}'
+# DATABASE = 'postgres'
+# USER = 'postgres'
 # PASSWORD = f'{pass_token.PASSWORD}'
 # HOST = f'{pass_token.HOST}'
 # USER_MYSQL = f'{pass_token.USER_MYSQL}'
