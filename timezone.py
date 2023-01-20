@@ -1,7 +1,6 @@
 from datetime import datetime
 from db_mysql import Weather_db
 import time
-from config import TIMEZONE_TOKEN
 
 ERROR_CORRECTION = 3600
 
@@ -22,9 +21,7 @@ def get_posix_time():
 
 
 def add_lag(client_id, posix_time):
-    print('posix_time', posix_time)
     server_posix_time = get_posix_time()
-    print(f'{posix_time} - {server_posix_time}', (posix_time - server_posix_time))
     lag = int((posix_time - server_posix_time) / ERROR_CORRECTION)
     weather_db.add_lag(client_id, lag)
 
@@ -34,11 +31,5 @@ def current_time():
     now = time.gmtime(now_posix)
     hour = nice_time(now.tm_hour)
     minute = nice_time(now.tm_min)
-    now_str = f'{hour + 5}:{minute}'
+    now_str = f'{hour}:{minute}'
     return now_str
-
-
-class Timezone:
-    def __init__(self):
-        self.url = 'https://timezoneapi.io/api/timezone/'
-        self.token = TIMEZONE_TOKEN
