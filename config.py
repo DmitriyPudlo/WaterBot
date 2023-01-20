@@ -7,7 +7,6 @@ HOST = input('Host name: ')
 USER_MYSQL = input('User name: ')
 PASSWORD_MYSQL = input('Password: ')
 DATABASE_MYSQL = input('Database name: ')
-TIMEZONE_TOKEN = input('Timezone token: ')
 DATABASE = 'postgres'
 USER = 'postgres'
 
