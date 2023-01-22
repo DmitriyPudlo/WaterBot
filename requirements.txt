@@ -1,0 +1,7 @@
+pyTelegramBotAPI
+mysql-connector-python
+requests
+apscheduler
+pytz
+timezonefinder
+psycopg2

@@ -1,4 +1,0 @@
-pyTelegramBotAPI
-mysql-connector-python
-psycopg2-binary
-requests

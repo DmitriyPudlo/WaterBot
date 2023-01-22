@@ -1,10 +1,10 @@
 from datetime import datetime
-from db_mysql import Weather_db
 import time
+import pytz
+from timezonefinder import TimezoneFinder
 
-ERROR_CORRECTION = 3600
 
-weather_db = Weather_db()
+tf = TimezoneFinder()
 
 
 def nice_time(time_):
@@ -13,23 +13,22 @@ def nice_time(time_):
     return time_
 
 
-def get_posix_time():
-    now = datetime.now()
-    posix_datetime = int((now - datetime(1970, 1, 1)).total_seconds())
-    print('posix_datetime', posix_datetime)
-    return posix_datetime
+def find_lag(lat, lon):
+    tz = tf.timezone_at(lng=lon, lat=lat)
+    pytz_tz = pytz.timezone(tz)
+    client_time = datetime.now(pytz_tz)
+    lag = client_time.strftime('%Z')
+    return int(lag)
 
 
-def add_lag(client_id, posix_time):
-    server_posix_time = get_posix_time()
-    lag = int((posix_time - server_posix_time) / ERROR_CORRECTION)
-    weather_db.add_lag(client_id, lag)
+def current_time(lag):
+    server_time_posix = int(time.time())
+    sec_lag = lag * 3600
+    now_time_posix = server_time_posix + sec_lag
+    now_time = time.gmtime(now_time_posix)
+    hour = nice_time(now_time.tm_hour)
+    minute = nice_time(now_time.tm_min)
+    need_time_str = f'{hour}:{minute}'
+    return need_time_str
 
 
-def current_time():
-    now_posix = int(time.time())
-    now = time.gmtime(now_posix)
-    hour = nice_time(now.tm_hour)
-    minute = nice_time(now.tm_min)
-    now_str = f'{hour}:{minute}'
-    return now_str
