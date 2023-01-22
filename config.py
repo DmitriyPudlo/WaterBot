@@ -16,8 +16,9 @@ TOKEN_GEO = input('Geocode token: ')
 TELEGRAM_TOKEN = input('Telegram token: ')
 HOST = input('Host name: ')
 USER_MYSQL = input('User name: ')
-PASSWORD_MYSQL = input('Password: ')
+PASSWORD_MYSQL = input('Password MYSQL: ')
 DATABASE_MYSQL = input('Database name: ')
+PASSWORD = input('Password Postgres: ')
 DATABASE = 'postgres'
 USER = 'postgres'
 
