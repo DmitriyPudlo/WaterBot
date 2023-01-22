@@ -1,13 +1,15 @@
-from weather import Weather
-from geocode import Geocode
-from db_mysql import Weather_db
-import telebot
-from telebot import types
-from config import TELEGRAM_TOKEN
 import messages
+import telebot
 import time
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from telebot import types
 from city_list import city_list
-from timezone import add_lag, current_time
+from config import TELEGRAM_TOKEN
+from db_mysql import Weather_db
+from geocode import Geocode
+from timezone import current_time
+from weather import Weather
 
 PATTERN_TIME = '^(([0,1][0-9])|(2[0-3])):[0-5][0-9]$'
 PATTERN_UPDATE_TIME = '^Изменить время: (([0,1][0-9])|(2[0-3])):[0-5][0-9]$'
@@ -32,6 +34,31 @@ def find_updated_city(coordinates):
     if coordinates in city_list:
         return coordinates
     return False
+
+
+def get_forecast(client_id):
+    if water_db.get_city(client_id) and water_db.get_time(client_id):
+        print('GO')
+        geo_tag = water_db.get_city(client_id)
+        need_time = water_db.get_time(client_id)
+        lag = water_db.get_lag(client_id)
+        now_time = current_time(lag)
+        print(now_time, need_time)
+        if now_time == need_time:
+            print('YES')
+            msg = weather.check_weather(geo_tag)
+            telebot.send_message(client_id, f"{msg}", reply_markup=markup)
+
+
+def background_scheduler(*args):
+    scheduler = BackgroundScheduler(daemon=True)
+    scheduler.start()
+    scheduler.add_job(
+        func=get_forecast,
+        args=args,
+        trigger=IntervalTrigger(seconds=60),
+    )
+    time.sleep(1)
 
 
 geocode = Geocode()
@@ -60,21 +87,10 @@ def get_time(message):
         telebot.send_message(message.chat.id, f"{messages.msg_city_first}", reply_markup=markup)
         return
     need_time = message.text
-    add_lag(message.chat.id, message.date)
     water_db.new_time(message.chat.id, need_time)
     telebot.send_message(message.chat.id, f"{messages.msg_complete}", reply_markup=markup)
     client_id = message.chat.id
-    while water_db.get_city(client_id) and water_db.get_time(client_id):
-        print('GO')
-        geo_tag = water_db.get_city(client_id)
-        need_time = water_db.get_time(client_id)
-        now_time = current_time()
-        print(now_time, need_time)
-        if now_time == need_time:
-            print('YES')
-            msg = weather.check_weather(geo_tag)
-            telebot.send_message(client_id, f"{msg}", reply_markup=markup)
-        time.sleep(60)
+    background_scheduler(client_id)
 
 
 @telebot.message_handler(func=lambda message: message.text in city_list)
@@ -85,7 +101,7 @@ def get_city(message):
         water_db.add_user(message.chat.id)
         print(f'New user {message.chat.id}')
         geo_tag = geocode.get_coordinates(message.text)
-        water_db.new_city(message.chat.id, geo_tag)
+        water_db.new_city_and_lag(message.chat.id, geo_tag)
         print(f'New city {message.text}')
         telebot.send_message(message.chat.id, f"{messages.msg_time}", reply_markup=markup)
         return
@@ -110,7 +126,7 @@ def update_city(message):
         if not new_city:
             telebot.send_message(message.chat.id, f"{messages.city_not_found}", reply_markup=markup)
         geo_tag = geocode.get_coordinates(new_city)
-        water_db.new_city(message.chat.id, geo_tag)
+        water_db.new_city_and_lag(message.chat.id, geo_tag)
         telebot.send_message(message.chat.id, f"{messages.msg_change_city}", reply_markup=markup)
 
 
