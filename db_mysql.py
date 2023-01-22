@@ -1,6 +1,7 @@
 from mysql.connector import connect
 from config import HOST, PASSWORD_MYSQL, USER_MYSQL, DATABASE_MYSQL
 import db_select
+from timezone import find_lag
 
 
 class Weather_db:
@@ -25,13 +26,6 @@ class Weather_db:
                 cursor_db.execute(sql_add_user)
                 conn.commit()
 
-    def add_lag(self, client_id, lag):
-        with connect(host=HOST, user=USER_MYSQL, password=PASSWORD_MYSQL, database=DATABASE_MYSQL) as conn:
-            with conn.cursor() as cursor_db:
-                sql_add_lag = f"UPDATE client SET lag_time = '{lag}' WHERE client_id = '{client_id}'"
-                cursor_db.execute(sql_add_lag)
-                conn.commit()
-
     def add_city(self, city):
         with connect(host=HOST, user=USER_MYSQL, password=PASSWORD_MYSQL, database=DATABASE_MYSQL) as conn:
             with conn.cursor() as cursor_db:
@@ -47,7 +41,7 @@ class Weather_db:
                 cursor_db.execute(sql_add_reiteration)
                 conn.commit()
 
-    def new_city(self, client_id, geo_tag):
+    def new_city_and_lag(self, client_id, geo_tag):
         with connect(host=HOST, user=USER_MYSQL, password=PASSWORD_MYSQL, database=DATABASE_MYSQL) as conn:
             with conn.cursor() as cursor_db:
                 lat = geo_tag['lat']
@@ -56,6 +50,9 @@ class Weather_db:
                 cursor_db.execute(sql_add_lat)
                 sql_add_lon = f"UPDATE client SET lon = '{lon}' WHERE client_id = '{client_id}'"
                 cursor_db.execute(sql_add_lon)
+                lag = find_lag(lat=lat, lon=lon)
+                sql_add_lag = f"UPDATE client SET lag_time = '{lag}' WHERE client_id = '{client_id}'"
+                cursor_db.execute(sql_add_lag)
                 conn.commit()
 
     def new_time(self, client_id, time):

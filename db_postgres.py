@@ -1,6 +1,7 @@
 import psycopg2
 import db_select
 from config import DATABASE, USER, PASSWORD
+from timezone import find_lag
 
 
 class Weather_db:
@@ -40,13 +41,6 @@ class Weather_db:
                                f"ON CONFLICT (client_id) DO NOTHING"
                 self.cursor_db.execute(sql_add_user)
 
-    def add_lag(self, client_id, lag):
-        with psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD) as self.conn:
-            self.conn.autocommit = True
-            with self.conn.cursor() as self.cursor_db:
-                sql_add_lag = f"UPDATE client SET lag_time = '{lag}' WHERE client_id = '{client_id}'"
-                self.cursor_db.execute(sql_add_lag)
-
     def add_city(self, city):
         with psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD) as self.conn:
             self.conn.autocommit = True
@@ -63,7 +57,7 @@ class Weather_db:
                 sql_add_reiteration = f"UPDATE cities SET reiteration = 1 WHERE city = '{city}'"
                 self.cursor_db.execute(sql_add_reiteration)
 
-    def new_city(self, client_id, geo_tag):
+    def new_city_and_lag(self, client_id, geo_tag):
         with psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD) as self.conn:
             self.conn.autocommit = True
             with self.conn.cursor() as self.cursor_db:
@@ -73,6 +67,9 @@ class Weather_db:
                 self.cursor_db.execute(sql_add_lat)
                 sql_add_lon = f"UPDATE client SET lon = '{lon}' WHERE client_id = '{client_id}'"
                 self.cursor_db.execute(sql_add_lon)
+                lag = find_lag(lat=lat, lon=lon)
+                sql_add_lag = f"UPDATE client SET lag_time = '{lag}' WHERE client_id = '{client_id}'"
+                self.cursor_db.execute(sql_add_lag)
 
     def new_time(self, client_id, time):
         with psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD) as self.conn:
