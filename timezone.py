@@ -16,14 +16,19 @@ def nice_time(time_):
 def find_lag(lat, lon):
     tz = tf.timezone_at(lng=lon, lat=lat)
     pytz_tz = pytz.timezone(tz)
+    print(pytz_tz)
     client_time = datetime.now(pytz_tz)
-    lag = client_time.strftime('%Z')
-    return int(lag)
+    pytz_lag_str = client_time.strftime('%z')
+    pytz_lag = int(pytz_lag_str)
+    hour = pytz_lag // 100
+    minute = pytz_lag % 100
+    lag = hour * 60 + minute
+    return lag
 
 
 def current_time(lag):
     server_time_posix = int(time.time())
-    sec_lag = lag * 3600
+    sec_lag = lag * 60
     now_time_posix = server_time_posix + sec_lag
     now_time = time.gmtime(now_time_posix)
     hour = nice_time(now_time.tm_hour)
